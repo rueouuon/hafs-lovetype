@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAFS 사랑 & 관계 가치관 연구 센터</title>
+    <!-- Chart.js 실시간 그래프 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #2C3E50;
+            --bg: #F4F7F9;
+            --card-bg: #FFFFFF;
+            --text: #333333;
+        }
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 95vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            box-sizing: border-box;
+        }
+        .hidden { display: none !important; }
+        .btn-main {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 15px;
+        }
+        .btn-main:hover { background: #357ABD; }
+        .btn-sub {
+            width: 100%;
+            padding: 12px;
+            background: #E2E8F0;
+            color: #2D3748;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-option {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 14px;
+            background: #fff;
+            text-align: left;
+            font-size: 0.98rem;
+            line-height: 1.5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #2D3748;
+            box-sizing: border-box;
+        }
+        .btn-option:hover {
+            border-color: var(--primary);
+            background: #F0F7FF;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #E9ECEF;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress-inner {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .q-number { font-size: 0.9rem; font-weight: bold; color: var(--primary); margin-bottom: 8px; }
+        .q-title { font-size: 1.2rem; font-weight: bold; line-height: 1.5; margin-bottom: 25px; color: #1A2530; word-break: keep-all; }
+        
+        .result-type-title { font-size: 1.6rem; font-weight: bold; color: var(--primary); margin: 15px 0; text-align: center; }
+        .result-desc { background: #F8F9FA; padding: 20px; border-radius: 14px; font-size: 0.95rem; line-height: 1.7; border: 1px solid #E9ECEF; margin-bottom: 20px; }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid #CBD5E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        
+        .hub-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
+        .hub-card {
+            background: #F8F9FA;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 18px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .hub-card:hover { transform: translateY(-2px); border-color: var(--primary); }
+        .hub-code { font-size: 0.85rem; font-weight: bold; color: var(--primary); margin-bottom: 4px; }
+        .hub-title { font-size: 1.05rem; font-weight: bold; color: var(--secondary); margin-bottom: 6px; }
+        .hub-desc { font-size: 0.88rem; color: #666; margin: 0; }
+        
+        .nick-list { max-height: 130px; overflow-y: auto; background: #F1F5F9; padding: 12px; border-radius: 10px; font-size: 0.85rem; line-height: 1.6; }
+        .rank-box { background: #FFF9DB; border: 1px solid #FFE066; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1. 안내 화면 -->
+    <div id="intro-screen">
+        <h2 style="color: var(--secondary); margin-top: 0;">HAFS 사랑 & 관계 가치관 진단</h2>
+        <div style="background: #F0F7FF; padding: 18px; border-radius: 12px; border-left: 4px solid var(--primary); line-height: 1.7; font-size: 0.95rem;">
+            안녕하세요, 저희는 사랑에 관한 소디포 연구 중 합스(HAFS) 학생들의 실제 사랑 가치관을 조사하기 위해 이 검사를 제공합니다.<br><br>
+            본 진단은 진화심리학(데이비드 버스)과 인문심리학(에리히 프롬)의 이론을 바탕으로 설계되었으며, 총 8개 문항으로 구성되어 있습니다.
+        </div>
+        <button class="btn-main" onclick="startQuiz()">검사 시작하기</button>
+    </div>
+
+    <!-- 2. 테스트 화면 -->
+    <div id="quiz-screen" class="hidden">
+        <div class="progress-bar"><div id="progress" class="progress-inner"></div></div>
+        <div id="q-number" class="q-number">질문 1 / 8</div>
+        <div id="q-title" class="q-title"></div>
+        <div id="options-container"></div>
+    </div>
+
+    <!-- 3. 진단 결과 화면 -->
+    <div id="result-screen" class="hidden">
+        <h3 style="margin: 0; color: #666; font-size: 0.95rem; text-align: center;">당신의 관계 가치관 유형은?</h3>
+        <div id="result-type" class="result-type-title"></div>
+        <div id="result-desc" class="result-desc"></div>
+        <button class="btn-main" onclick="showSaveScreen()">내 결과 통계에 반영하기</button>
+    </div>
+
+    <!-- 4. 닉네임 입력 화면 -->
+    <div id="save-screen" class="hidden">
+        <h3 style="color: var(--secondary); margin-top: 0;">통계 데이터 반영</h3>
+        <p style="font-size: 0.9rem; color: #666; line-height: 1.5;">
+            선착순 100명까지 합스 실시간 통계에 기록됩니다.<br>통계 목록에 저장하고 싶은 닉네임을 입력해 주세요.
+        </p>
+        <input type="text" id="nickname-input" placeholder="닉네임 입력 (예: HAFS20기)" maxlength="12">
+        <button class="btn-main" onclick="saveData()">저장하고 전체 통계 및 메인 홈으로 이동</button>
+    </div>
+
+    <!-- 5. 메인 홈 & 실시간 통계 센터 -->
+    <div id="main-home" class="hidden">
+        <h2 style="color: var(--secondary); margin-top: 0; border-bottom: 2px solid #E2E8F0; padding-bottom: 10px;">HAFS 소디포 연구 메인 센터</h2>
+        
+        <h4 style="margin: 15px 0 10px; color: #4A5568;">📊 실시간 HAFS 유형 분포 통계 (<span id="total-count">0</span>/100명)</h4>
+        <div style="width: 100%; max-width: 300px; margin: 0 auto;">
+            <canvas id="statsChart"></canvas>
+        </div>
+
+        <h5 style="margin: 15px 0 8px; color: #4A5568;">👥 최근 참가자 목록</h5>
+        <div id="nick-list" class="nick-list">아직 등록된 응답이 없습니다.</div>
+
+        <hr style="border:0; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+
+        <!-- 탐색 및 활동 메뉴 -->
+        <h4 style="margin: 0 0 10px; color: #4A5568;">📚 탐색 및 활동 허브</h4>
+        <div class="hub-grid">
+            <div class="hub-card" onclick="openPage('guide-page')">
+                <div class="hub-code">1. 연구 가이드</div>
+                <div class="hub-title">버스와 프롬의 사랑 가치관 차이 알아보기</div>
+                <p class="hub-desc">성 선택설(버스) vs 사랑의 4가지 요소(프롬)</p>
+            </div>
+            <div class="hub-card" onclick="openQuizPage()">
+                <div class="hub-code">1.1. 퀴즈 활동</div>
+                <div class="hub-title">심리학 이론 상식 퀴즈 (1회 제한)</div>
+                <p class="hub-desc">버스 & 프롬 이론 퀴즈 풀고 랭킹 TOP 5 도전에 성공하세요!</p>
+            </div>
+            <div class="hub-card" onclick="openGamePage()">
+                <div class="hub-code">1.2. 인터랙티브 게임</div>
+                <div class="hub-title">트리플 사랑 딜레마 게임</div>
+                <p class="hub-desc">본능적 끌림 vs 성숙한 노력 상황별 밸런스 선택</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- [가이드 페이지] -->
+    <div id="guide-page" class="hidden">
+        <h3 style="color: var(--secondary);">📚 연구 가이드: 버스 vs 프롬</h3>
+        <div style="font-size: 0.92rem; line-height: 1.7; color: #4A5568; background: #F8F9FA; padding: 18px; border-radius: 12px;">
+            <h4 style="color: var(--primary); margin-top:0;">🧬 데이비드 버스 (진화심리학)</h4>
+            • <b>성 선택설 (Sexual Selection)</b>: 인간은 생존과 번식 유용성을 위해 이성을 선택하는 형질을 발달시켰습니다.<br>
+            • <b>이성 선호 기제</b>: 번식 가치(건강, 외모적 끌림)와 자원 확보 가능성 등을 본능적으로 중시하게 된다고 설명합니다.
+            
+            <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #CBD5E0;">
+            
+            <h4 style="color: var(--primary); margin-top:0;">📖 에리히 프롬 (인문심리학)</h4>
+            • <b>『사랑의 기술』</b>: 사랑은 단순한 감정적 수동성이 아닌, 스스로 연마해야 하는 능동적 기술입니다.<br>
+            • <b>사랑의 4가지 필수 요소</b>:
+              1. <b>보살핌(Care)</b>: 상대의 성장에 대한 적극적 관심<br>
+              2. <b>책임(Responsibility)</b>: 상대의 요구에 대한 자발적 응답<br>
+              3. <b>존중(Respect)</b>: 상대를 있는 그대로 인정함<br>
+              4. <b>지식(Knowledge)</b>: 상대의 핵심을 파악하는 깊은 이해
+        </div>
+        <button class="btn-sub" onclick="openPage('main-home')">메인 홈으로 돌아가기</button>
+    </div>
+
+    <!-- [퀴즈 페이지] -->
+    <div id="quiz-page" class="hidden">
+        <h3 style="color: var(--secondary); margin-top: 0;">🏆 버스 & 프롬 이론 퀴즈</h3>
+        <div class="rank-box">
+            <h5 style="margin: 0 0 8px; color: #D97706;">🥇 퀴즈 TOP 5 명예의 전당</h5>
+            <div id="quiz-rank-list" style="font-size: 0.85rem; line-height: 1.5;">아직 기록이 없습니다.</div>
+        </div>
+        <div id="quiz-content-area">
+            <div id="quiz-q-num" class="q-number"></div>
+            <div id="quiz-q-title" class="q-title"></div>
+            <div id="quiz-options"></div>
+        </div>
+        <button class="btn-sub" onclick="openPage('main-home')">메인 홈으로 돌아가기</button>
+    </div>
+
+    <!-- [게임 페이지] -->
+    <div id="game-page" class="hidden">
+        <h3 style="color: var(--secondary); margin-top: 0;">🎮 트리플 사랑 딜레마</h3>
+        <p style="font-size: 0.88rem; color: #666;">당신의 선택은 본능(버스)에 가까울까요, 성숙한 기술(프롬)에 가까울까요?</p>
+        <div id="game-content-area">
+            <div id="game-q-num" class="q-number"></div>
+            <div id="game-q-title" class="q-title"></div>
+            <div id="game-options"></div>
+        </div>
+        <button class="btn-sub" onclick="openPage('main-home')">메인 홈으로 돌아가기</button>
+    </div>
+
+</div>
+
+<script>
+const questions = [
+    { title: "지나가다 진짜 내 이상형 스타일을 마주쳤을 때 나는?", a: "“와 미쳤다…” 심장아 나대지마!", b: "“오 잘생겼네or예쁘네.” 근데 대화해보고 성격이랑 가치관 안 맞으면 관심 싹 꺼짐." },
+    { title: "연애 1년 차, 만나도 더 이상 설레지 않고 그냥 친한 친구 같으면?", a: "“아.. 사랑이 식었나?” 서운하다.", b: "“오히려 좋아! 이제 편해졌으니까 서로 노력해서 더 오래 가야지.”" },
+    { title: "내 애인이 이성 친구의 깻잎을 떼어주는 걸 본 나는?", a: "“제정신인가?”", b: "“손이 모자랐나 보지~” 쿨하게 넘긴다." },
+    { title: "진짜 좋아하던 사람인데 찌질하거나 엄청 깨는 모습을 목격한 나는?", a: "“아.. 이건 좀..” 팍 식는다.", b: "“사람인데 완벽할 수 없지” 단점까지 챙겨주고 싶다." },
+    { title: "시험이 3일 남았는데 애인이 서운하다고 징징대면?", a: "“나 지금 시험인데..” 정떨어지고 읽씹한다.", b: "“많이 힘든가 보네.” 대화로 깔끔하게 풀어준다." },
+    { title: "주말 데이트를 한다면?", a: "놀이공원, 핫플, 맛집 등 새로운 거 하기!", b: "조용한 카페나 산책하면서 서로 깊은 대화 나누기" },
+    { title: "기념일에 상대방이 준비해 줬으면 하는 선물은?", a: "인스타 자랑할 만한 예쁘고 감동적인 낭만 선물!", b: "“너 이거 필요했잖아.” 하면서 내가 평소에 흘려 말한 거 챙겨주는 선물" },
+    { title: "내 기준 더 화나는 이별 멘트는?", a: "“미안… 이제 너를 봐도 더 이상 가슴이 안 뛰어.”", b: "“우리 서로 노력해도 안 되는 것 같아.”" }
+];
+
+let currentIdx = 0;
+let scoreA = 0;
+let scoreB = 0;
+let calculatedType = "";
+let chartInstance = null;
+
+function startQuiz() {
+    document.getElementById('intro-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+    showQuestion();
+}
+
+function showQuestion() {
+    const q = questions[currentIdx];
+    document.getElementById('q-number').innerText = `질문 ${currentIdx + 1} / ${questions.length}`;
+    document.getElementById('q-title').innerText = q.title;
+    document.getElementById('progress').style.width = ((currentIdx) / questions.length * 100) + "%";
+
+    document.getElementById('options-container').innerHTML = `
+        <button class="btn-option" onclick="nextQuestion('A')">A. ${q.a}</button>
+        <button class="btn-option" onclick="nextQuestion('B')">B. ${q.b}</button>
+    `;
+}
+
+function nextQuestion(type) {
+    if (type === 'A') scoreA++;
+    else scoreB++;
+    
+    currentIdx++;
+    if (currentIdx < questions.length) {
+        showQuestion();
+    } else {
+        document.getElementById('progress').style.width = "100%";
+        processResult();
+    }
+}
+
+function processResult() {
+    let typeName = "";
+    let typeDesc = "";
+
+    if (scoreA >= 5 && scoreB <= 3) {
+        typeName = "🔥 핫 스파크 도파민러";
+        typeDesc = `<div style="line-height:1.7;"><b>✨ 특징</b>: 첫눈에 반하는 진화적 끌림을 중시합니다.<br><b>🧪 이론</b>: 버스의 성 선택설에 따른 감정 반응 지향</div>`;
+    } else if (scoreA <= 3 && scoreB >= 5) {
+        typeName = "🌿 멘탈 유지 뚝배기러";
+        typeDesc = `<div style="line-height:1.7;"><b>✨ 특징</b>: 깊은 신뢰와 성숙한 책임을 중시합니다.<br><b>🧪 이론</b>: 프롬의 사랑의 4가지 요소(보살핌/책임/존중/지식) 실천 유형</div>`;
+    } else if (scoreA >= 4 && scoreB >= 4) {
+        typeName = "⚡ 로맨스 폭주 밸런서";
+        typeDesc = `<div style="line-height:1.7;"><b>✨ 특징</b>: 끌림과 성숙한 노력을 균형 있게 발휘합니다.</div>`;
+    } else {
+        typeName = "🧊 쿨해 보이지만 마이웨이";
+        typeDesc = `<div style="line-height:1.7;"><b>✨ 특징</b>: 자기 주체성과 독립적 삶을 더 중요하게 생각합니다.</div>`;
+    }
+
+    calculatedType = typeName;
+    document.getElementById('quiz-screen').classList.add('hidden');
+    document.getElementById('result-screen').classList.remove('hidden');
+    document.getElementById('result-type').innerText = typeName;
+    document.getElementById('result-desc').innerHTML = typeDesc;
+}
+
+function showSaveScreen() {
+    document.getElementById('result-screen').classList.add('hidden');
+    document.getElementById('save-screen').classList.remove('hidden');
+}
+
+function saveData() {
+    const nick = document.getElementById('nickname-input').value.trim() || "익명 HAFS인";
+    let records = JSON.parse(localStorage.getItem('hafs_love_stats')) || [];
+    
+    if (records.length < 100) {
+        records.push({ nickname: nick, type: calculatedType });
+        localStorage.setItem('hafs_love_stats', JSON.stringify(records));
+    }
+
+    openPage('main-home');
+    renderStats();
+}
+
+function openPage(pageId) {
+    const pages = ['intro-screen', 'quiz-screen', 'result-screen', 'save-screen', 'main-home', 'guide-page', 'quiz-page', 'game-page'];
+    pages.forEach(p => document.getElementById(p).classList.add('hidden'));
+    document.getElementById(pageId).classList.remove('hidden');
+}
+
+function renderStats() {
+    const records = JSON.parse(localStorage.getItem('hafs_love_stats')) || [];
+    document.getElementById('total-count').innerText = records.length;
+
+    const nickListEl = document.getElementById('nick-list');
+    if (records.length === 0) {
+        nickListEl.innerHTML = "아직 등록된 응답이 없습니다.";
+    } else {
+        nickListEl.innerHTML = records.slice().reverse().map(r => `• <b>${r.nickname}</b>님: ${r.type}`).join('<br>');
+    }
+
+    const counts = { "🔥 핫 스파크 도파민러": 0, "🌿 멘탈 유지 뚝배기러": 0, "⚡ 로맨스 폭주 밸런서": 0, "🧊 쿨해 보이지만 마이웨이": 0 };
+    records.forEach(r => { if (counts[r.type] !== undefined) counts[r.type]++; });
+
+    const ctx = document.getElementById('statsChart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(counts),
+            datasets: [{ data: Object.values(counts), backgroundColor: ['#FF6B6B', '#51CF66', '#FCC419', '#339AF0'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } } }
+    });
+}
+
+/* 퀴즈 로직 (1회 제한 & Top 5) */
+const quizQuestions = [
+    { title: "데이비드 버스의 진화심리학에 따른 '성 선택설'의 핵심 설명으로 옳은 것은?", options: ["사랑은 오직 의지적 연마이다", "이성 선택은 번식 유용성과 자원 확보 기제에 기반한다", "모든 사람은 같은 외모에 반응한다"], ans: 1 },
+    { title: "에리히 프롬이 제시한 사랑의 4가지 필수 요소가 아닌 것은?", options: ["소유(Possession)", "보살핌(Care)", "존중(Respect)"], ans: 0 },
+    { title: "프롬의 『사랑의 기술』에서 강조하는 사랑의 본질은?", options: ["강렬한 첫눈의 도파민 자극", "수동적인 감정이 아닌 능동적인 능력과 기술", "질투심의 솔직한 표출"], ans: 1 },
+    { title: "버스가 바라보는 인간의 이성 선호 경향의 성격은?", options: ["인류가 진화하며 번식 성공률을 높이기 위한 적응 기제", "문화에 따라서만 100% 변화하는 가변적 기제", "개인의 인격 차이일 뿐 진화와 무관하다"], ans: 0 }
+];
+
+let currentQuizIdx = 0;
+let quizScore = 0;
+
+function openQuizPage() {
+    openPage('quiz-page');
+    renderQuizRank();
+    
+    if (localStorage.getItem('hafs_quiz_done')) {
+        document.getElementById('quiz-content-area').innerHTML = `<p style="color:#E53E3E; font-weight:bold; text-align:center;">이미 퀴즈 응답을 완료하셨습니다! (1인 1회 제한)</p>`;
+        return;
+    }
+    currentQuizIdx = 0;
+    quizScore = 0;
+    showQuizQuestion();
+}
+
+function showQuizQuestion() {
+    const q = quizQuestions[currentQuizIdx];
+    document.getElementById('quiz-q-num').innerText = `퀴즈 ${currentQuizIdx + 1} / ${quizQuestions.length}`;
+    document.getElementById('quiz-q-title').innerText = q.title;
+    document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) => 
+        `<button class="btn-option" onclick="selectQuizAns(${i})">${i+1}. ${opt}</button>`
+    ).join('');
+}
+
+function selectQuizAns(idx) {
+    if (idx === quizQuestions[currentQuizIdx].ans) quizScore++;
+    currentQuizIdx++;
+    if (currentQuizIdx < quizQuestions.length) {
+        showQuizQuestion();
+    } else {
+        finishQuiz();
+    }
+}
+
+function finishQuiz() {
+    localStorage.setItem('hafs_quiz_done', 'true');
+    const nick = prompt("퀴즈 완료! 명예의 전당 랭킹에 등록할 닉네임을 입력하세요:", "HAFS학습자") || "익명";
+    
+    let rankData = JSON.parse(localStorage.getItem('hafs_quiz_ranks')) || [];
+    rankData.push({ nickname: nick, score: quizScore, date: new Date().toLocaleTimeString() });
+    
+    // 점수 높은 순 정렬
+    rankData.sort((a, b) => b.score - a.score);
+    localStorage.setItem('hafs_quiz_ranks', JSON.stringify(rankData));
+    
+    document.getElementById('quiz-content-area').innerHTML = `<div style="text-align:center; padding:20px;">🎉 퀴즈 제출 완료! 맞춘 개수: <b>${quizScore} / ${quizQuestions.length}</b></div>`;
+    renderQuizRank();
+}
+
+function renderQuizRank() {
+    let rankData = JSON.parse(localStorage.getItem('hafs_quiz_ranks')) || [];
+    const top5 = rankData.slice(0, 5);
+    if (top5.length === 0) {
+        document.getElementById('quiz-rank-list').innerHTML = "아직 등록된 랭킹이 없습니다.";
+    } else {
+        document.getElementById('quiz-rank-list').innerHTML = top5.map((r, i) => `${i+1}위: <b>${r.nickname}</b> - ${r.score}점/4점`).join('<br>');
+    }
+}
+
+/* 딜레마 게임 로직 */
+const gameQuestions = [
+    { title: "상황 1: 이상형 딜레마", a: "첫눈에 심장이 터질 것 같은 외모의 이성 (버스)", b: "외모는 보통이지만 대화와 존중이 완벽한 이성 (프롬)" },
+    { title: "상황 2: 갈등 상황 딜레마", a: "내 솔직한 질투와 본능을 숨김없이 표현한다 (버스)", b: "상대의 입장과 사정을 경청하고 이해하려 노력한다 (프롬)" },
+    { title: "상황 3: 연애 유지 딜레마", a: "새로운 핫플/자극적인 데이트가 최고다 (버스)", b: "서로의 목표를 응원하며 성장을 보살피는 시간이 최고다 (프롬)" }
+];
+let gameIdx = 0;
+let gameBuss = 0;
+let gameFromm = 0;
+
+function openGamePage() {
+    openPage('game-page');
+    gameIdx = 0; gameBuss = 0; gameFromm = 0;
+    showGameQuestion();
+}
+
+function showGameQuestion() {
+    const q = gameQuestions[gameIdx];
+    document.getElementById('game-q-num').innerText = `딜레마 ${gameIdx + 1} / ${gameQuestions.length}`;
+    document.getElementById('game-q-title').innerText = q.title;
+    document.getElementById('game-options').innerHTML = `
+        <button class="btn-option" onclick="selectGame(1)">A. ${q.a}</button>
+        <button class="btn-option" onclick="selectGame(2)">B. ${q.b}</button>
+    `;
+}
+
+function selectGame(type) {
+    if (type === 1) gameBuss++;
+    else gameFromm++;
+    gameIdx++;
+    if (gameIdx < gameQuestions.length) {
+        showGameQuestion();
+    } else {
+        document.getElementById('game-content-area').innerHTML = `
+            <div style="background:#F8F9FA; padding:20px; border-radius:12px; text-align:center;">
+                <h4>🎮 딜레마 선택 분석 완료</h4>
+                <p>🧬 버스적 진화 본능 선택: <b>${gameBuss}회</b></p>
+                <p>📖 프롬적 성숙 기술 선택: <b>${gameFromm}회</b></p>
+                <p style="font-size:0.9rem; color:#666; margin-top:10px;">당신의 선택 성향을 바탕으로 사랑 가치관을 넓혀보세요!</p>
+            </div>
+        `;
+    }
+}
+</script>
+
+</body>
+</html>
